@@ -20,6 +20,7 @@ check:features:
   stage: test
   script:
     - cargo build --no-default-features
+    - cargo build --no-default-features --features storage-lru
     - cargo build --no-default-features --features storage-sqlx
     - cargo build --no-default-features --features storage-sled
     - cargo build --no-default-features --features serve-http
