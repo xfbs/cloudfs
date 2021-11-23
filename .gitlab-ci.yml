@@ -48,7 +48,7 @@ pages:
   dependencies:
     - build:amd64
     - doc
-  step: deploy
+  stage: deploy
   script:
     - mkdir -p public/nightly
     - mv target/doc public/doc
