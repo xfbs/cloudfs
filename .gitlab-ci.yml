@@ -1,22 +1,38 @@
 stages:
+  - setup
   - test
   - build
   - deploy
 
+docker:
+  image: docker
+  stage: setup
+  services:
+    - docker:dind
+  script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+    - docker build . -t "$CI_REGISTRY_IMAGE/rust"
+    - docker push "$CI_REGISTRY_IMAGE/rust"
+  only:
+    refs:
+      - master
+    changes:
+      - scripts/alpine.dockerfile
+
 test:
-  image: rust
+  image: "$CU_REGISTRY_IMAGE/rust"
   stage: test
   script:
     - cargo test
 
 check:format:
-  image: rust
+  image: "$CU_REGISTRY_IMAGE/rust"
   stage: test
   script:
     - cargo fmt -- --check
 
 check:features:
-  image: rust
+  image: "$CU_REGISTRY_IMAGE/rust"
   stage: test
   script:
     - cargo build --no-default-features
@@ -26,7 +42,7 @@ check:features:
     - cargo build --no-default-features --features serve-http
 
 build:amd64:
-  image: rust
+  image: "$CU_REGISTRY_IMAGE/rust"
   stage: build
   script:
     - cargo build --release
@@ -36,7 +52,7 @@ build:amd64:
     expire_in: 1 week
 
 doc:
-  image: rust
+  image: "$CU_REGISTRY_IMAGE/rust"
   stage: build
   script:
     - cargo doc
