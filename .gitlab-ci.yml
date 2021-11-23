@@ -17,7 +17,7 @@ docker:
     refs:
       - master
     changes:
-      - scripts/alpine.dockerfile
+      - Dockerfile
 
 test:
   image: "$CU_REGISTRY_IMAGE/rust"
