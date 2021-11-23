@@ -1,7 +1,11 @@
-use bytes::Bytes;
 use crate::hash::Hash;
+use bytes::Bytes;
 use std::error::Error as StdError;
 use thiserror::Error;
+use async_trait::async_trait;
+
+#[cfg(feature = "storage-lru")]
+pub mod lru;
 
 #[derive(PartialEq, Eq, Clone, Copy, Debug)]
 pub enum HashAlgorithm {
@@ -14,7 +18,7 @@ pub struct Context {
     chunk_size: usize,
     block_size: usize,
     entry_size: usize,
-    tree_size: usize
+    tree_size: usize,
 }
 
 #[derive(Error, Clone, Debug)]
@@ -27,15 +31,46 @@ pub enum StorageReadError<E: StdError> {
     Other(E),
 }
 
-#[async_trait::async_trait]
-pub trait StorageRead<E: StdError> {
-    async fn chunk_get(&self, context: &Context, hash: &Hash) -> Result<Option<Bytes>, StorageReadError<E>>;
-    async fn block_get(&self, context: &Context, hash: &Hash) -> Result<Option<Bytes>, StorageReadError<E>>;
-    async fn entry_get(&self, context: &Context, hash: &Hash) -> Result<Option<Bytes>, StorageReadError<E>>;
-    async fn tree_get(&self, context: &Context, hash: &Hash) -> Result<Option<Bytes>, StorageReadError<E>>;
-    async fn head_get(&self, context: &Context, hash: &Hash) -> Result<Option<Bytes>, StorageReadError<E>>;
+#[async_trait]
+pub trait StorageRead {
+    /// Errors from the underlying storage that can be produced.
+    type Err: StdError;
+
+    /// Retrieve a chunk.
+    async fn chunk_get(
+        &self,
+        context: &Context,
+        hash: &Hash,
+    ) -> Result<Option<Bytes>, StorageReadError<Self::Err>>;
+
+    /// Retrieve a block.
+    async fn block_get(
+        &self,
+        context: &Context,
+        hash: &Hash,
+    ) -> Result<Option<Bytes>, StorageReadError<Self::Err>>;
+
+    /// Retrieve an entry.
+    async fn entry_get(
+        &self,
+        context: &Context,
+        hash: &Hash,
+    ) -> Result<Option<Bytes>, StorageReadError<Self::Err>>;
+
+    /// Retrieve a tree.
+    async fn tree_get(
+        &self,
+        context: &Context,
+        hash: &Hash,
+    ) -> Result<Option<Bytes>, StorageReadError<Self::Err>>;
+
+    /// Retrieve the current head.
+    async fn head_get(
+        &self,
+        context: &Context,
+        hash: &Hash,
+    ) -> Result<Option<Bytes>, StorageReadError<Self::Err>>;
 }
 
 #[async_trait::async_trait]
-trait StorageWrite<E: StdError> {
-}
+trait StorageWrite<E: StdError> {}

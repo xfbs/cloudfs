@@ -1,8 +1,7 @@
-use digest::Digest;
-use serde::{Deserialize, Serialize};
+use bytes::Bytes;
 
-#[derive(Clone, Debug, Serialize, Deserialize, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub struct Hash(pub Vec<u8>);
+#[derive(Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct Hash(pub Bytes);
 
 impl std::fmt::Display for Hash {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
