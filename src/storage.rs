@@ -1,4 +1,4 @@
-use crate::hash::Hash;
+use crate::hash::{Hash, HashAlgorithm};
 use async_trait::async_trait;
 use bytes::Bytes;
 use std::error::Error as StdError;
@@ -8,22 +8,6 @@ use thiserror::Error;
 pub mod http;
 #[cfg(feature = "storage-lru")]
 pub mod lru;
-
-#[derive(PartialEq, Eq, Clone, Copy, Debug)]
-pub enum HashAlgorithm {
-    #[cfg(feature = "hash-sha2")]
-    Sha512,
-    #[cfg(feature = "hash-sha2")]
-    Sha256,
-    #[cfg(feature = "hash-sha3")]
-    Sha3_256,
-    #[cfg(feature = "hash-sha3")]
-    Sha3_512,
-    #[cfg(feature = "hash-blake2b")]
-    Blake2b,
-    #[cfg(feature = "hash-blake2b")]
-    Blake2s,
-}
 
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub struct Context {
