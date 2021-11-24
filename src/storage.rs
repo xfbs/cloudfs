@@ -4,6 +4,8 @@ use bytes::Bytes;
 use std::error::Error as StdError;
 use thiserror::Error;
 
+#[cfg(feature = "storage-http")]
+pub mod http;
 #[cfg(feature = "storage-lru")]
 pub mod lru;
 
