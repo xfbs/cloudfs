@@ -9,7 +9,18 @@ pub mod lru;
 
 #[derive(PartialEq, Eq, Clone, Copy, Debug)]
 pub enum HashAlgorithm {
+    #[cfg(feature = "hash-sha2")]
     Sha512,
+    #[cfg(feature = "hash-sha2")]
+    Sha256,
+    #[cfg(feature = "hash-sha3")]
+    Sha3_256,
+    #[cfg(feature = "hash-sha3")]
+    Sha3_512,
+    #[cfg(feature = "hash-blake2b")]
+    Blake2b,
+    #[cfg(feature = "hash-blake2b")]
+    Blake2s,
 }
 
 #[derive(PartialEq, Eq, Clone, Debug)]
