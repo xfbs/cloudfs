@@ -33,7 +33,7 @@ url = { version = "2.2.2", optional = true }
 [features]
 default = ["rustls-tls", "hash-sha2"]
 # storage backends
-storage-lru = ["lru"]
+storage-lru = ["lru", "tokio/sync"]
 storage-sqlx = []
 storage-sled = []
 storage-http = ["reqwest", "url"]
