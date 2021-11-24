@@ -1,8 +1,8 @@
 use crate::hash::Hash;
+use async_trait::async_trait;
 use bytes::Bytes;
 use std::error::Error as StdError;
 use thiserror::Error;
-use async_trait::async_trait;
 
 #[cfg(feature = "storage-lru")]
 pub mod lru;

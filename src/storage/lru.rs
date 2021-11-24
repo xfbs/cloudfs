@@ -1,10 +1,10 @@
-use lru::LruCache;
-use super::{StorageRead, StorageReadError, Context};
-use bytes::Bytes;
+use super::{Context, StorageRead, StorageReadError};
 use crate::hash::Hash;
 use async_trait::async_trait;
-use tokio::sync::Mutex;
+use bytes::Bytes;
+use lru::LruCache;
 use std::sync::Arc;
+use tokio::sync::Mutex;
 
 #[derive(PartialEq, Eq, Hash, Clone, Debug)]
 enum Key {
@@ -47,7 +47,7 @@ impl<S: StorageRead + Sync + Send> StorageRead for LruStorage<S> {
                 Ok(Some(bytes)) => {
                     cache.put(key, bytes.clone());
                     Ok(Some(bytes))
-                },
+                }
                 other => other,
             }
         }
@@ -67,7 +67,7 @@ impl<S: StorageRead + Sync + Send> StorageRead for LruStorage<S> {
                 Ok(Some(bytes)) => {
                     cache.put(key, bytes.clone());
                     Ok(Some(bytes))
-                },
+                }
                 other => other,
             }
         }
@@ -87,7 +87,7 @@ impl<S: StorageRead + Sync + Send> StorageRead for LruStorage<S> {
                 Ok(Some(bytes)) => {
                     cache.put(key, bytes.clone());
                     Ok(Some(bytes))
-                },
+                }
                 other => other,
             }
         }
@@ -107,7 +107,7 @@ impl<S: StorageRead + Sync + Send> StorageRead for LruStorage<S> {
                 Ok(Some(bytes)) => {
                     cache.put(key, bytes.clone());
                     Ok(Some(bytes))
-                },
+                }
                 other => other,
             }
         }
@@ -127,7 +127,7 @@ impl<S: StorageRead + Sync + Send> StorageRead for LruStorage<S> {
                 Ok(Some(bytes)) => {
                     cache.put(key, bytes.clone());
                     Ok(Some(bytes))
-                },
+                }
                 other => other,
             }
         }
