@@ -23,7 +23,7 @@ test:
   image: "$CI_REGISTRY_IMAGE/rust"
   stage: test
   script:
-    - cargo test
+    - cargo test --all-features
 
 check:format:
   image: "$CI_REGISTRY_IMAGE/rust"
