@@ -39,6 +39,10 @@ check:features:
     - cargo build --no-default-features --features storage-lru
     - cargo build --no-default-features --features storage-sqlx
     - cargo build --no-default-features --features storage-sled
+    - cargo build --no-default-features --features storage-http
+    - cargo build --no-default-features --features hash-sha2
+    - cargo build --no-default-features --features hash-sha3
+    - cargo build --no-default-features --features hash-blake2
     - cargo build --no-default-features --features serve-http
 
 build:amd64:
