@@ -25,6 +25,22 @@ impl HttpStorage {
     pub fn new(client: Client, url: Url) -> Self {
         HttpStorage { client, url }
     }
+
+    pub async fn fetch(&self, kind: &str, hash: &Hash) -> Result<Option<Bytes>, HttpStorageError> {
+        let url = self
+            .url
+            .join(&format!("/{}/{:x}", kind, hash.0))?;
+        let response = self
+            .client
+            .get(url)
+            .send()
+            .await?;
+        match response.status() {
+            StatusCode::OK => Ok(Some(response.bytes().await?)),
+            StatusCode::NO_CONTENT => Ok(None),
+            status => Err(HttpStorageError::Response(status)),
+        }
+    }
 }
 
 #[async_trait]
@@ -33,131 +49,56 @@ impl StorageRead for HttpStorage {
 
     async fn chunk_get(
         &self,
-        context: &Context,
+        _context: &Context,
         hash: &Hash,
     ) -> Result<Option<Bytes>, StorageReadError<Self::Err>> {
-        let url = self
-            .url
-            .join(&format!("/chunk/{:x}", hash.0))
-            .map_err(|e| StorageReadError::Other(HttpStorageError::UrlParse(e)))?;
-        let response = self
-            .client
-            .get(url)
-            .send()
-            .await
-            .map_err(|e| StorageReadError::Other(HttpStorageError::Reqwest(e)))?;
-        match response.status() {
-            StatusCode::OK => {
-                Ok(Some(response.bytes().await.map_err(|e| {
-                    StorageReadError::Other(HttpStorageError::Reqwest(e))
-                })?))
-            }
-            StatusCode::NO_CONTENT => Ok(None),
-            status => Err(StorageReadError::Other(HttpStorageError::Response(status))),
+        match self.fetch("chunk", hash).await {
+            Ok(other) => Ok(other),
+            Err(e) => Err(StorageReadError::Other(e)),
         }
     }
 
     async fn block_get(
         &self,
-        context: &Context,
+        _context: &Context,
         hash: &Hash,
     ) -> Result<Option<Bytes>, StorageReadError<Self::Err>> {
-        let url = self
-            .url
-            .join(&format!("/block/{:x}", hash.0))
-            .map_err(|e| StorageReadError::Other(HttpStorageError::UrlParse(e)))?;
-        let response = self
-            .client
-            .get(url)
-            .send()
-            .await
-            .map_err(|e| StorageReadError::Other(HttpStorageError::Reqwest(e)))?;
-        match response.status() {
-            StatusCode::OK => {
-                Ok(Some(response.bytes().await.map_err(|e| {
-                    StorageReadError::Other(HttpStorageError::Reqwest(e))
-                })?))
-            }
-            StatusCode::NO_CONTENT => Ok(None),
-            status => Err(StorageReadError::Other(HttpStorageError::Response(status))),
+        match self.fetch("block", hash).await {
+            Ok(other) => Ok(other),
+            Err(e) => Err(StorageReadError::Other(e)),
         }
     }
 
     async fn entry_get(
         &self,
-        context: &Context,
+        _context: &Context,
         hash: &Hash,
     ) -> Result<Option<Bytes>, StorageReadError<Self::Err>> {
-        let url = self
-            .url
-            .join(&format!("/entry/{:x}", hash.0))
-            .map_err(|e| StorageReadError::Other(HttpStorageError::UrlParse(e)))?;
-        let response = self
-            .client
-            .get(url)
-            .send()
-            .await
-            .map_err(|e| StorageReadError::Other(HttpStorageError::Reqwest(e)))?;
-        match response.status() {
-            StatusCode::OK => {
-                Ok(Some(response.bytes().await.map_err(|e| {
-                    StorageReadError::Other(HttpStorageError::Reqwest(e))
-                })?))
-            }
-            StatusCode::NO_CONTENT => Ok(None),
-            status => Err(StorageReadError::Other(HttpStorageError::Response(status))),
+        match self.fetch("entry", hash).await {
+            Ok(other) => Ok(other),
+            Err(e) => Err(StorageReadError::Other(e)),
         }
     }
 
     async fn tree_get(
         &self,
-        context: &Context,
+        _context: &Context,
         hash: &Hash,
     ) -> Result<Option<Bytes>, StorageReadError<Self::Err>> {
-        let url = self
-            .url
-            .join(&format!("/tree/{:x}", hash.0))
-            .map_err(|e| StorageReadError::Other(HttpStorageError::UrlParse(e)))?;
-        let response = self
-            .client
-            .get(url)
-            .send()
-            .await
-            .map_err(|e| StorageReadError::Other(HttpStorageError::Reqwest(e)))?;
-        match response.status() {
-            StatusCode::OK => {
-                Ok(Some(response.bytes().await.map_err(|e| {
-                    StorageReadError::Other(HttpStorageError::Reqwest(e))
-                })?))
-            }
-            StatusCode::NO_CONTENT => Ok(None),
-            status => Err(StorageReadError::Other(HttpStorageError::Response(status))),
+        match self.fetch("tree", hash).await {
+            Ok(other) => Ok(other),
+            Err(e) => Err(StorageReadError::Other(e)),
         }
     }
 
     async fn head_get(
         &self,
-        context: &Context,
+        _context: &Context,
         hash: &Hash,
     ) -> Result<Option<Bytes>, StorageReadError<Self::Err>> {
-        let url = self
-            .url
-            .join(&format!("/head/{:x}", hash.0))
-            .map_err(|e| StorageReadError::Other(HttpStorageError::UrlParse(e)))?;
-        let response = self
-            .client
-            .get(url)
-            .send()
-            .await
-            .map_err(|e| StorageReadError::Other(HttpStorageError::Reqwest(e)))?;
-        match response.status() {
-            StatusCode::OK => {
-                Ok(Some(response.bytes().await.map_err(|e| {
-                    StorageReadError::Other(HttpStorageError::Reqwest(e))
-                })?))
-            }
-            StatusCode::NO_CONTENT => Ok(None),
-            status => Err(StorageReadError::Other(HttpStorageError::Response(status))),
+        match self.fetch("head", hash).await {
+            Ok(other) => Ok(other),
+            Err(e) => Err(StorageReadError::Other(e)),
         }
     }
 }
